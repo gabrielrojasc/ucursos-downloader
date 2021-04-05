@@ -1,5 +1,7 @@
 env/
 courses.txt
 semester.txt
+PAATH.txt
 .DS_Store
 test/
+

@@ -53,13 +53,16 @@ s = requests.Session()
 for cookie in cookies:
   s.cookies.set(cookie['name'], cookie['value'])
 
+PATH = open("PATH.txt","r").readlines()[0][:-1]
 
 for k in range(len(links)):
   browser.get(links[k])
   time.sleep(1)
   course = courses[k][0:6]
+  course_name = " ".join(browser.find_element_by_xpath('/html/body/div[2]/div/h1/span').text.split())
+  course += " - "+course_name
   try:
-    os.mkdir(f"./test/{course}")
+    os.mkdir(f"{PATH}/{course}")
   except:
     pass
   row = browser.find_elements_by_xpath('//*[@id="materiales"]/tbody')
@@ -76,11 +79,11 @@ for k in range(len(links)):
           if folder_name != "":
             folder_name += "/"
             try:
-              os.mkdir(f"./test/{course}/{folder_name}")
+              os.mkdir(f"{PATH}/{course}/{folder_name}")
             except:
               pass
           r = s.get(dlink)
-          file = open(f'./test/{course}/{folder_name}{file_name}', 'wb+')
+          file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'wb+')
           file.write(r.content)
 
 browser.close()
