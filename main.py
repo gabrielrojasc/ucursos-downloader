@@ -53,7 +53,6 @@ browser.find_element_by_xpath('//*[@id="upform"]/form/dl/input').click()
 time.sleep(1)
 
 cookies = browser.get_cookies()
-
 s = requests.Session()
 for cookie in cookies:
   s.cookies.set(cookie['name'], cookie['value'])
