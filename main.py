@@ -1,6 +1,6 @@
 #!python3
 # -*- coding: utf-8 -*-
-import requests, os, time, getpass
+import requests, os, time, getpass, sys
 from selenium import webdriver
 
 def getcourses():
@@ -58,7 +58,11 @@ s = requests.Session()
 for cookie in cookies:
   s.cookies.set(cookie['name'], cookie['value'])
 
-PATH = open("PATH.txt","r").readlines()[0][:-1]
+try:
+  PATH = open("PATH.txt","r").readlines()[0][:-1]
+except FileNotFoundError:
+  print('Se debe crear archivo "PATH.txt:" con el path donde se quieran descargar los achivos')
+  sys.exit(1)
 
 for k in range(len(links)):
   browser.get(links[k])
