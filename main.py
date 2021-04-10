@@ -6,24 +6,29 @@ from selenium import webdriver
 def getcourses():
   global semester, courses
   try:
-    semester = open("semester.txt", "r")
+    semester = open("semester.txt", "r+")
   except FileNotFoundError:
     semester = open("semester.txt", "w+")
   try:
-    courses = open("courses.txt", "r")
+    courses = open("courses.txt", "r+")
   except FileNotFoundError:
     courses = open("courses.txt", "w+")
+
   semester = semester.readlines()
   courses = courses.readlines()
 
-  if semester == "":
+  if semester == []:
+    semester = open("semester.txt", "r+")
     semester.write(input("Año: ")+"\n")
     semester.write(input("Semestre: "))
+    getcourses()
 
-  if courses == "":
+  if courses == []:
+    courses = open("courses.txt", "r+")
     ncourses = int(input("Numero de ramos: "))
     for _ in range(ncourses):
-      courses.write(input("Cusos({curso} {sección}): ")+"\n")
+      courses.write(input("Cusos({codigo} {sección}): ")+"\n")
+    getcourses()
 
 def getlogin():
   global username, password
