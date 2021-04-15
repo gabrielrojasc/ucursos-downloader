@@ -1,4 +1,4 @@
-#!python3
+#!./env/bin/python3
 # -*- coding: utf-8 -*-
 import requests, os, time, getpass, sys
 from selenium import webdriver
