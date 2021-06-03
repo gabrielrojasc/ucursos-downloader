@@ -53,20 +53,20 @@ while i < len(courses):
     {semester[1]}/{courses[i][0:6]}/{courses[i][7]}/material_docente/")
   i+=1
 
+browser=webdriver.Safari()
+browser.get("https://www.u-cursos.cl")
+time.sleep(1)
+browser.find_element_by_name("username").send_keys(f"{username}")
+browser.find_element_by_name("password").send_keys(f"{password}")
+browser.find_element_by_xpath('//*[@id="upform"]/form/dl/input').click()
+time.sleep(2)
+
+cookies = browser.get_cookies()
+s = requests.Session()
+for cookie in cookies:
+  s.cookies.set(cookie['name'], cookie['value'])
+
 try:
-  browser=webdriver.Safari()
-  browser.get("https://www.u-cursos.cl")
-  time.sleep(1)
-  browser.find_element_by_name("username").send_keys(f"{username}")
-  browser.find_element_by_name("password").send_keys(f"{password}")
-  browser.find_element_by_xpath('//*[@id="upform"]/form/dl/input').click()
-  time.sleep(2)
-
-  cookies = browser.get_cookies()
-  s = requests.Session()
-  for cookie in cookies:
-    s.cookies.set(cookie['name'], cookie['value'])
-
   for k in range(len(links)):
     browser.get(links[k])
     time.sleep(1)
@@ -96,8 +96,13 @@ try:
               except:
                 pass
             r = s.get(dlink)
-            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'wb+')
-            file.write(r.content)
+            try:
+              file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'r+b')
+            except FileNotFoundError:
+              file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
+
+            if file.read() != r.content:
+              file.write(r.content)
 
   browser.close()
 
