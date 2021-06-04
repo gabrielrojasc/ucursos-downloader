@@ -74,7 +74,6 @@ for k in range(len(links)):
     course_name = " ".join(browser.find_element_by_xpath('/html/body/div[2]/\
       div/h1/span').text.split())
   except Exception:
-    print(error)
     print("Wrong username or password")
     browser.close()
     sys.exit()
