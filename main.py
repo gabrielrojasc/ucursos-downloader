@@ -101,12 +101,18 @@ for k in range(len(links)):
               pass
           r = s.get(dlink)
           try:
-            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'r+b')
+            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'rb')
           except FileNotFoundError:
             file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
+            file.write(r.content)
+            file.close()
+            continue
 
           if file.read() != r.content:
+            file.close()
+            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
             file.write(r.content)
+          file.close()
 
 browser.close()
 
