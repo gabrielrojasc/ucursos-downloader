@@ -1,7 +1,8 @@
 #!./env/bin/python3
 # -*- coding: utf-8 -*-
-import requests, os, time, getpass, sys
+import requests, os, getpass, sys
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 def getfiles():
   global semester, courses, PATH
@@ -20,7 +21,6 @@ def getfiles():
     print('Se debe crear archivo "PATH.txt:" con el path donde se quieran \
       descargar los achivos')
     sys.exit(1)
-
 
   semester = semester.readlines()
   courses = courses.readlines()
@@ -55,11 +55,16 @@ while i < len(courses):
 
 browser=webdriver.Safari()
 browser.get("https://www.u-cursos.cl")
-time.sleep(1)
+WebDriverWait(browser, timeout=5).until(lambda d: d.find_element_by_name("username"))
 browser.find_element_by_name("username").send_keys(f"{username}")
 browser.find_element_by_name("password").send_keys(f"{password}")
 browser.find_element_by_xpath('//*[@id="upform"]/form/dl/input').click()
-time.sleep(2)
+try:
+  WebDriverWait(browser, timeout=5).until(lambda d: d.find_element_by_id("favoritos"))
+except:
+  print("Wrong username or password")
+  browser.close()
+  sys.exit()
 
 cookies = browser.get_cookies()
 s = requests.Session()
@@ -68,15 +73,10 @@ for cookie in cookies:
 
 for k in range(len(links)):
   browser.get(links[k])
-  time.sleep(1)
+  WebDriverWait(browser, timeout=3).until(lambda d: d.find_element_by_id("favoritos"))
   course = courses[k][0:6]
-  try:
-    course_name = " ".join(browser.find_element_by_xpath('/html/body/div[2]/\
-      div/h1/span').text.split())
-  except Exception:
-    print("Wrong username or password")
-    browser.close()
-    sys.exit()
+  course_name = " ".join(browser.find_element_by_xpath('/html/body/div[2]/\
+    div/h1/span').text.split())
   course += " - "+course_name
   try:
     os.mkdir(f"{PATH}/{course}")
@@ -85,34 +85,39 @@ for k in range(len(links)):
   row = browser.find_elements_by_xpath('//*[@id="materiales"]/tbody')
   for i in range(len(row)):
     for row2 in row[i].find_elements_by_tag_name('tr'):
-      for row3 in row2.find_elements_by_xpath('td[3]'):
-          row4 = row3.find_elements_by_xpath('h1/a')
-          file_name = " ".join(row4[0].text.split())
-          for j in range(len(file_name)):
-            if file_name[j] == "/":
-              file_name = file_name[:j]+":"+file_name[j+1:]
-          dlink = row4[2].get_attribute('href')[:-8]
-          folder_name = row[i-1].find_element_by_xpath('tr[1]/td[2]').text 
-          if folder_name != "":
-            folder_name += "/"
-            try:
-              os.mkdir(f"{PATH}/{course}/{folder_name}")
-            except:
-              pass
-          r = s.get(dlink)
+      print('did sth')
+      for row3 in row2.find_elements_by_xpath("td/h1")[:-1]:
+        print("row3:", row3)
+        row4 = row3.find_elements_by_xpath('a')
+        print("row4:", row4)
+        file_name = " ".join(row4[0].text.split())
+        for j in range(len(file_name)):
+          if file_name[j] == "/":
+            file_name = file_name[:j]+":"+file_name[j+1:]
+        dlink = row4[2].get_attribute('href')[:-8]
+        print("asd:", row[i-1].find_element_by_xpath('//tr[@class="separador"]'))
+        folder_name = row[i-1].find_element_by_xpath('//tr[@class="separador"]/@data-categoria')
+        if folder_name != "":
+          folder_name += "/"
           try:
-            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'rb')
-          except FileNotFoundError:
-            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
-            file.write(r.content)
-            file.close()
-            continue
-
-          if file.read() != r.content:
-            file.close()
-            file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
-            file.write(r.content)
+            os.mkdir(f"{PATH}/{course}/{folder_name}")
+          except:
+            pass
+        r = s.get(dlink)
+        try:
+          file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'rb')
+        except FileNotFoundError:
+          file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
+          file.write(r.content)
           file.close()
+          continue
+
+        if file.read() != r.content:
+          file.close()
+          file = open(f'{PATH}/{course}/{folder_name}{file_name}', 'w+b')
+          file.write(r.content)
+        file.close()
 
 browser.close()
+s.close()
 
