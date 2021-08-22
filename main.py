@@ -85,18 +85,19 @@ for k in range(len(links)):
   row = browser.find_elements_by_xpath('//*[@id="materiales"]/tbody')
   for i in range(len(row)):
     for row2 in row[i].find_elements_by_tag_name('tr'):
-      print('did sth')
-      for row3 in row2.find_elements_by_xpath("td/h1")[:-1]:
-        print("row3:", row3)
-        row4 = row3.find_elements_by_xpath('a')
-        print("row4:", row4)
-        file_name = " ".join(row4[0].text.split())
+      row3_link = row2.find_elements_by_xpath('td/h1/a[contains(@class,"baja")]')
+      row3_name = row2.find_elements_by_xpath('td/h1/a[img[contains(@class, "icono")]]')
+      for n in range(len(row3_link)):
+        file_name = row3_name[n].get_attribute('textContent')
+        file_name = file_name.replace("\n", "")
+        file_name = file_name.replace("\t", "")
         for j in range(len(file_name)):
           if file_name[j] == "/":
             file_name = file_name[:j]+":"+file_name[j+1:]
-        dlink = row4[2].get_attribute('href')[:-8]
-        print("asd:", row[i-1].find_element_by_xpath('//tr[@class="separador"]'))
-        folder_name = row[i-1].find_element_by_xpath('//tr[@class="separador"]/@data-categoria')
+        dlink = row3_link[n].get_attribute('href')
+        folder_name = row[i-1].find_element_by_xpath('tr[contains(@class,"separador")]').text
+        folder_name = folder_name.replace("\n", "")
+        folder_name = folder_name.replace("\t", "")
         if folder_name != "":
           folder_name += "/"
           try:
