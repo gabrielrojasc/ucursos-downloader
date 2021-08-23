@@ -91,9 +91,7 @@ for k in range(len(links)):
         file_name = row3_name[n].get_attribute('textContent')
         file_name = file_name.replace("\n", "")
         file_name = file_name.replace("\t", "")
-        for j in range(len(file_name)):
-          if file_name[j] == "/":
-            file_name = file_name[:j]+":"+file_name[j+1:]
+        file_name = file_name.replace("/", ":")
         dlink = row3_link[n].get_attribute('href')
         folder_name = row[i-1].find_element_by_xpath('tr[contains(@class,"separador")]').text
         folder_name = folder_name.replace("\n", "")
