@@ -29,14 +29,14 @@ def getfiles():
     semester = open("semester.txt", "r+")
     semester.write(input("Año: ")+"\n")
     semester.write(input("Semestre: "))
-    getcourses()
+    getfiles()
 
   if courses == []:
     courses = open("courses.txt", "r+")
     ncourses = int(input("Numero de ramos: "))
     for _ in range(ncourses):
       courses.write(input("Cusos({codigo} {sección}): ")+"\n")
-    getcourses()
+    getfiles()
 
 def getlogin():
   global username, password
