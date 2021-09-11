@@ -5,7 +5,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 def getfiles():
-  global semester, courses, PATH
   try:
     semester = open("semester.txt", "r+")
   except FileNotFoundError:
@@ -29,23 +28,26 @@ def getfiles():
     semester = open("semester.txt", "r+")
     semester.write(input("Año: ")+"\n")
     semester.write(input("Semestre: "))
-    getfiles()
+    return getfiles()
 
   if courses == []:
     courses = open("courses.txt", "r+")
     ncourses = int(input("Numero de ramos: "))
     for _ in range(ncourses):
       courses.write(input("Cusos({codigo} {sección}): ")+"\n")
-    getfiles()
+    return getfiles()
+
+  return semester, courses, PATH
 
 def getlogin():
-  global username, password
   username = input("username: ")
   password = getpass.getpass()
+
+  return username, password
       
 
-getfiles()
-getlogin()
+semester, courses, PATH = getfiles()
+username, password = getlogin()
 i = 0
 links = list()
 while i < len(courses):
