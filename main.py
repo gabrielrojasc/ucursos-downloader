@@ -1,8 +1,9 @@
 #!./env/bin/python3
 # -*- coding: utf-8 -*-
-import requests, os, getpass, sys
+import requests, os, getpass, sys, time
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+
 
 def getfiles():
   try:
@@ -15,7 +16,7 @@ def getfiles():
     courses = open("courses.txt", "w+")
 
   try:
-    PATH = open("PATH.txt","r").readlines()[0][:-1]
+    PATH = open("PATH.txt", "r").readlines()[0][:-1]
   except FileNotFoundError:
     print('Se debe crear archivo "PATH.txt:" con el path donde se quieran \
       descargar los achivos')
@@ -26,7 +27,7 @@ def getfiles():
 
   if semester == []:
     semester = open("semester.txt", "r+")
-    semester.write(input("Año: ")+"\n")
+    semester.write(input("Año: ") + "\n")
     semester.write(input("Semestre: "))
     return getfiles()
 
@@ -34,17 +35,18 @@ def getfiles():
     courses = open("courses.txt", "r+")
     ncourses = int(input("Numero de ramos: "))
     for _ in range(ncourses):
-      courses.write(input("Cusos({codigo} {sección}): ")+"\n")
+      courses.write(input("Cusos({codigo} {sección}): ") + "\n")
     return getfiles()
 
   return semester, courses, PATH
+
 
 def getlogin():
   username = input("username: ")
   password = getpass.getpass()
 
   return username, password
-      
+
 
 semester, courses, PATH = getfiles()
 username, password = getlogin()
@@ -53,16 +55,20 @@ links = list()
 while i < len(courses):
   links.append(f"https://www.u-cursos.cl/ingenieria/{semester[0].rstrip()}/\
     {semester[1]}/{courses[i][0:6]}/{courses[i][7]}/material_docente/")
-  i+=1
+  i += 1
 
-browser=webdriver.Safari()
+browser = webdriver.Safari()
 browser.get("https://www.u-cursos.cl")
-WebDriverWait(browser, timeout=5).until(lambda d: d.find_element_by_name("username"))
+WebDriverWait(
+    browser, timeout=5).until(lambda d: d.find_element_by_name("username"))
 browser.find_element_by_name("username").send_keys(f"{username}")
+time.sleep(0.5)
 browser.find_element_by_name("password").send_keys(f"{password}")
+time.sleep(0.5)
 browser.find_element_by_xpath('//*[@id="upform"]/form/dl/input').click()
 try:
-  WebDriverWait(browser, timeout=5).until(lambda d: d.find_element_by_id("favoritos"))
+  WebDriverWait(
+      browser, timeout=5).until(lambda d: d.find_element_by_id("favoritos"))
 except:
   print("Wrong username or password")
   browser.close()
@@ -75,11 +81,13 @@ for cookie in cookies:
 
 for k in range(len(links)):
   browser.get(links[k])
-  WebDriverWait(browser, timeout=3).until(lambda d: d.find_element_by_id("favoritos"))
+  WebDriverWait(
+      browser, timeout=3).until(lambda d: d.find_element_by_id("favoritos"))
   course = courses[k][0:6]
-  course_name = " ".join(browser.find_element_by_xpath('/html/body/div[2]/\
+  course_name = " ".join(
+      browser.find_element_by_xpath('/html/body/div[2]/\
     div/h1/span').text.split())
-  course += " - "+course_name
+  course += " - " + course_name
   try:
     os.mkdir(f"{PATH}/{course}")
   except:
@@ -87,15 +95,18 @@ for k in range(len(links)):
   row = browser.find_elements_by_xpath('//*[@id="materiales"]/tbody')
   for i in range(len(row)):
     for row2 in row[i].find_elements_by_tag_name('tr'):
-      row3_link = row2.find_elements_by_xpath('td/h1/a[contains(@class,"baja")]')
-      row3_name = row2.find_elements_by_xpath('td/h1/a[img[contains(@class, "icono")]]')
+      row3_link = row2.find_elements_by_xpath(
+          'td/h1/a[contains(@class,"baja")]')
+      row3_name = row2.find_elements_by_xpath(
+          'td/h1/a[img[contains(@class, "icono")]]')
       for n in range(len(row3_link)):
         file_name = row3_name[n].get_attribute('textContent')
         file_name = file_name.replace("\n", "")
         file_name = file_name.replace("\t", "")
         file_name = file_name.replace("/", ":")
         dlink = row3_link[n].get_attribute('href')
-        folder_name = row[i-1].find_element_by_xpath('tr[contains(@class,"separador")]').text
+        folder_name = row[i - 1].find_element_by_xpath(
+            'tr[contains(@class,"separador")]').text
         folder_name = folder_name.replace("\n", "")
         folder_name = folder_name.replace("\t", "")
         if folder_name != "":
@@ -121,4 +132,3 @@ for k in range(len(links)):
 
 browser.close()
 s.close()
-
