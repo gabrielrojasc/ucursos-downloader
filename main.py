@@ -79,19 +79,12 @@ if __name__ == "__main__":
             if not path.exists(f"{PATH}/{course}/{folder_name}"):
               os.mkdir(f"{PATH}/{course}/{folder_name}")
           r = s.get(dlink)
-          if not path.exists(f"{PATH}/{course}/{folder_name}{file_name}"):
-            print(f"Downloading: {file_name}")
-            file = open(f"{PATH}/{course}/{folder_name}{file_name}", "w+b")
-            file.write(r.content)
-            file.close()
-            continue
-
-          file = open(f"{PATH}/{course}/{folder_name}{file_name}", "rb")
-          if file.read() != r.content:
+          if path.exists(f"{PATH}/{course}/{folder_name}{file_name}"):
             print(f"Updating: {file_name}")
-            file.close()
-            file = open(f"{PATH}/{course}/{folder_name}{file_name}", "w+b")
-            file.write(r.content)
+          else:
+            print(f"Downloading: {file_name}")
+          file = open(f"{PATH}/{course}/{folder_name}{file_name}", "w+b")
+          file.write(r.content)
           file.close()
 
   browser.close()

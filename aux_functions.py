@@ -3,11 +3,10 @@ import getpass
 from os import path
 
 def get_courses() -> list:
-  if not path.exists(path.join(sys.path[0], "courses.txt")):
-    courses = open(path.join(sys.path[0], "courses.txt"), "w+")
-  else:
+  if path.exists(path.join(sys.path[0], "courses.txt")):
     courses = open(path.join(sys.path[0], "courses.txt"), "r+")
     if courses_lines := courses.readlines():
+      courses.close()
       return courses_lines
 
   try:
@@ -17,12 +16,11 @@ def get_courses() -> list:
   for _ in range(n_courses):
     course = input("Cusos({codigo}-{sección}): ")
     courses.write(course.strip() + "\n")
+  courses.close()
   return get_courses()
 
 def get_semester() -> list:
-  if not path.exists(path.join(sys.path[0], "semester.txt")):
-    semester = open(path.join(sys.path[0], "semester.txt"), "w+")
-  else:
+  if path.exists(path.join(sys.path[0], "semester.txt")):
     semester = open(path.join(sys.path[0], "semester.txt"), "r+")
     if semester_lines := semester.readlines():
       semester.close()
