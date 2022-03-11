@@ -8,6 +8,8 @@ def get_courses() -> list:
     if courses_lines := courses.readlines():
       courses.close()
       return courses_lines
+  else:
+    courses = open(path.join(sys.path[0], "courses.txt"), "w+")
 
   try:
     n_courses = int(input("Numero de ramos: "))
@@ -25,6 +27,8 @@ def get_semester() -> list:
     if semester_lines := semester.readlines():
       semester.close()
       return semester_lines
+  else:
+    semester = open(path.join(sys.path[0], "semester.txt"), "w+")
 
   year = input("Año: ")
   semester.write(year + "\n")
