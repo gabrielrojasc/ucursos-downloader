@@ -11,7 +11,8 @@ from selenium.webdriver.common.by import By
 from aux_functions import get_semester
 from aux_functions import get_courses
 from aux_functions import get_path
-from aux_functions import get_login_credentials
+from aux_functions import get_username
+from aux_functions import get_password
 from aux_functions import get_links
 
 def login(browser, wait, username, password):
@@ -32,7 +33,16 @@ if __name__ == "__main__":
   courses = get_courses()
   PATH = get_path()
 
-  username, password = get_login_credentials()
+  len_args = len(sys.argv)
+  if len_args > 1:
+    username = sys.argv[1]
+  else:
+    username = get_username()
+  if len_args > 2:
+    password = sys.argv[2]
+  else:
+    password = get_password()
+    
   links = get_links(courses, semester[0], semester[1])
 
   browser = webdriver.Safari()

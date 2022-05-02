@@ -47,11 +47,13 @@ def get_path() -> list:
     )
     sys.exit(1)
 
-def get_login_credentials() -> tuple:
+def get_username() -> str:
   username = input("username: ")
-  password = getpass.getpass()
+  return username
 
-  return username, password
+def get_password() -> str:
+  password = getpass.getpass()
+  return password
 
 def get_links(courses: list, semester_year: int, semester_number: int) -> list:
   links = list()
