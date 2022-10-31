@@ -29,7 +29,7 @@ def login(browser, wait, username, password):
         sys.exit()
 
 
-if __name__ == "__main__":
+def main():
     semester = get_semester()
     courses = get_courses()
     PATH = get_path()
@@ -105,3 +105,7 @@ if __name__ == "__main__":
 
     browser.close()
     s.close()
+
+
+if __name__ == "__main__":
+    main()
