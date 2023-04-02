@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-import requests
 import os
 import sys
 from os import path
+
+import requests
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from utils import get_semester
-from utils import get_courses
-from utils import get_path
-from utils import get_username
-from utils import get_password
-from utils import get_links
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from utils import (get_courses, get_links, get_password, get_path,
+                   get_semester, get_username)
 
 
 def login(browser, wait, username, password):
@@ -66,8 +63,10 @@ def main():
         )
         course += " - " + course_name
         print(f"\n{course}")
-        if not path.exists(f"{PATH}/{course}"):
-            os.mkdir(f"{PATH}/{course}")
+        course_path = f"{PATH}/{course}"
+        if not path.exists(course_path):
+            os.makedirs(course_path)
+            print(f"Directory {course_path} created")
         row = browser.find_elements_by_xpath('//*[@id="materiales"]/tbody')
         for i in range(len(row)):
             for row2 in row[i].find_elements_by_tag_name("tr"):
